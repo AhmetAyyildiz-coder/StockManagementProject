@@ -1,6 +1,6 @@
 using Core.Entities;
 
-namespace Core.Interfaces.Services;
+namespace Core.Services;
 
 /// <summary>
 /// Service interface for authentication and security operations.

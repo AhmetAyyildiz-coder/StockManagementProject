@@ -1,8 +1,10 @@
+using Core.Entities;
+
 namespace Core.Services;
 
 /// <summary>
 /// Service interface for managing current tenant context in multi-tenant applications.
-/// Provides access to the current tenant information for data isolation.
+/// Provides access to the current tenant information for data isolation and validation.
 /// </summary>
 public interface ICurrentTenantService
 {
@@ -11,27 +13,23 @@ public interface ICurrentTenantService
     /// This value is used for data filtering and isolation.
     /// </summary>
     string TenantId { get; }
-    
+
     /// <summary>
-    /// Gets the name of the current tenant for display purposes.
+    /// Gets the current tenant entity asynchronously.
     /// </summary>
-    string? TenantName { get; }
-    
+    /// <returns>A task representing the asynchronous operation that returns the current tenant.</returns>
+    Task<Tenant?> GetTenantAsync();
+
     /// <summary>
-    /// Gets a value indicating whether a valid tenant context is currently available.
+    /// Validates if the specified tenant identifier exists and is valid.
     /// </summary>
-    bool HasTenant { get; }
-    
+    /// <param name="tenantId">The tenant identifier to validate.</param>
+    /// <returns>A task representing the asynchronous operation that returns true if the tenant is valid.</returns>
+    Task<bool> ValidateTenantAsync(string tenantId);
+
     /// <summary>
-    /// Sets the current tenant context.
-    /// This method is typically called by tenant resolution middleware.
+    /// Gets a value indicating whether the current tenant context is valid.
     /// </summary>
-    /// <param name="tenantId">The tenant identifier</param>
-    /// <param name="tenantName">The tenant display name (optional)</param>
-    void SetTenant(string tenantId, string? tenantName = null);
-    
-    /// <summary>
-    /// Clears the current tenant context.
-    /// </summary>
-    void ClearTenant();
+    /// <returns>True if the current tenant is valid, false otherwise.</returns>
+    bool IsValidTenant();
 }
