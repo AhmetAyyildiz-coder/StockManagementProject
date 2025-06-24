@@ -124,4 +124,109 @@ public class AuthorizationHelperTests
         AuthorizationHelper.EnsureCanAccessTenant(user, "tenant-3");
         AuthorizationHelper.EnsureCanAccessTenant(user, "different-tenant");
     }
+
+    #region Permission-based Authorization Tests
+
+    [Fact]
+    public void EnsureHasPermission_WithRequiredPermission_ShouldNotThrow()
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Manager, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new Permission { Code = "MANAGE_MOVEMENT_TYPES", Name = "Manage Movement Types" }
+        };
+
+        // Act & Assert - Should not throw
+        AuthorizationHelper.EnsureHasPermission(user, permissions, "MANAGE_MOVEMENT_TYPES");
+    }
+
+    [Fact]
+    public void EnsureHasPermission_WithoutRequiredPermission_ShouldThrow()
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Employee, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new Permission { Code = "VIEW_PRODUCTS", Name = "View Products" }
+        };
+
+        // Act & Assert
+        var exception = Assert.Throws<UnauthorizedException>(() =>
+            AuthorizationHelper.EnsureHasPermission(user, permissions, "MANAGE_MOVEMENT_TYPES"));
+        Assert.Contains("MANAGE_MOVEMENT_TYPES", exception.Message);
+    }
+
+    [Fact]
+    public void HasAnyPermission_WithOneMatchingPermission_ShouldReturnTrue()
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Manager, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new Permission { Code = "MANAGE_MOVEMENT_TYPES", Name = "Manage Movement Types" },
+            new Permission { Code = "VIEW_PRODUCTS", Name = "View Products" }
+        };
+
+        // Act
+        var result = AuthorizationHelper.HasAnyPermission(user, permissions, "MANAGE_MOVEMENT_TYPES", "MANAGE_USERS");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void HasAllPermissions_WithAllMatchingPermissions_ShouldReturnTrue()
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Manager, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new Permission { Code = "MANAGE_MOVEMENT_TYPES", Name = "Manage Movement Types" },
+            new Permission { Code = "VIEW_PRODUCTS", Name = "View Products" }
+        };
+
+        // Act
+        var result = AuthorizationHelper.HasAllPermissions(user, permissions, "MANAGE_MOVEMENT_TYPES", "VIEW_PRODUCTS");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Theory]
+    [InlineData("MANAGE_MOVEMENT_TYPES", true)]
+    [InlineData("VIEW_PRODUCTS", true)]
+    [InlineData("manage_movement_types", false)] // Case sensitive
+    [InlineData("MANAGE MOVEMENT TYPES", false)] // Spaces not allowed
+    [InlineData("MANAGE-MOVEMENT-TYPES", false)] // Dashes not allowed
+    [InlineData("", false)]
+    [InlineData(null, false)]
+    public void IsValidPermissionCode_ShouldValidateCorrectly(string code, bool expected)
+    {
+        // Act
+        var result = AuthorizationHelper.IsValidPermissionCode(code);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData(UserRole.SystemAdmin, UserRole.TenantAdmin, true)]
+    [InlineData(UserRole.SystemAdmin, UserRole.Manager, true)]
+    [InlineData(UserRole.TenantAdmin, UserRole.Manager, true)]
+    [InlineData(UserRole.Manager, UserRole.Employee, true)]
+    [InlineData(UserRole.Employee, UserRole.ReadOnly, true)]
+    [InlineData(UserRole.Manager, UserRole.TenantAdmin, false)]
+    [InlineData(UserRole.Employee, UserRole.Manager, false)]
+    [InlineData(UserRole.ReadOnly, UserRole.Employee, false)]
+    public void IsHigherRole_ShouldCompareRolesCorrectly(UserRole currentRole, UserRole targetRole, bool expected)
+    {
+        // Act
+        var result = AuthorizationHelper.IsHigherRole(currentRole, targetRole);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    #endregion
 }
