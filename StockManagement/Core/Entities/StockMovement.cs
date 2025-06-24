@@ -5,11 +5,13 @@ namespace Core.Entities;
 /// <summary>
 /// Represents a stock movement transaction in the multi-tenant stock management system.
 /// Records all changes to product inventory levels with full audit tracking.
+/// Tracks all inventory changes with audit trail and reference information.
+/// Inherits from TenantEntity to ensure proper tenant isolation.
 /// </summary>
 public class StockMovement : TenantEntity, IEntity<int>
 {
     /// <summary>
-    /// Gets or sets the unique identifier of the stock movement.
+    /// Gets or sets the unique identifier for the stock movement.
     /// </summary>
     public int Id { get; set; }
 
@@ -37,12 +39,14 @@ public class StockMovement : TenantEntity, IEntity<int>
 
     /// <summary>
     /// Gets or sets optional notes or comments about this movement.
+    /// Optional field for providing context or additional information.
     /// </summary>
     public string? Notes { get; set; }
 
     /// <summary>
     /// Gets or sets the unit price of the product at the time of movement.
     /// Required for incoming movements to calculate stock valuation.
+    /// Used for calculating stock value and cost tracking.
     /// </summary>
     public decimal? UnitPrice { get; set; }
 
@@ -54,10 +58,9 @@ public class StockMovement : TenantEntity, IEntity<int>
 
     /// <summary>
     /// Gets or sets the identifier of the user who created this movement.
+    /// Required for audit trail and accountability.
     /// </summary>
     public int? CreatedByUserId { get; set; }
-
-    #region Calculated Properties
 
     /// <summary>
     /// Gets the calculated quantity change considering the movement direction.
@@ -65,9 +68,7 @@ public class StockMovement : TenantEntity, IEntity<int>
     /// </summary>
     public int CalculatedQuantity => MovementType?.Direction * Quantity ?? 0;
 
-    #endregion
-
-    #region Navigation Properties
+    // Navigation Properties
 
     /// <summary>
     /// Gets or sets the product associated with this movement.
@@ -80,9 +81,12 @@ public class StockMovement : TenantEntity, IEntity<int>
     public MovementType MovementType { get; set; } = null!;
 
     /// <summary>
+    /// Gets or sets the supplier associated with this movement (for incoming movements).
+    /// </summary>
+    public Supplier? Supplier { get; set; }
+
+    /// <summary>
     /// Gets or sets the user who created this movement.
     /// </summary>
     public User? CreatedByUser { get; set; }
-
-    #endregion
 }

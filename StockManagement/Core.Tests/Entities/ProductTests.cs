@@ -1,4 +1,5 @@
 using Core.Entities;
+using System.Reflection;
 using Xunit;
 
 namespace Core.Tests.Entities;
@@ -131,5 +132,72 @@ public class ProductTests
 
         // Assert
         Assert.Equal(minStockLevel, product.MinStockLevel);
+    }
+
+    [Theory]
+    [InlineData(0, 10, true)]  // Current stock 0, min level 10 -> low stock
+    [InlineData(5, 10, true)]  // Current stock 5, min level 10 -> low stock
+    [InlineData(10, 10, true)] // Current stock 10, min level 10 -> low stock (equal)
+    [InlineData(15, 10, false)] // Current stock 15, min level 10 -> not low stock
+    [InlineData(0, 0, true)]   // Current stock 0, min level 0 -> low stock (equal)
+    public void Product_IsLowStock_ShouldReturnCorrectValue(int currentStock, int minStockLevel, bool expectedIsLowStock)
+    {
+        // Arrange
+        var product = new Product { MinStockLevel = minStockLevel };
+        // Note: In real implementation, CurrentStock would be set by the infrastructure layer
+        // For testing, we're testing the logic directly
+        
+        // Using reflection to set the private setter for testing purposes
+        var currentStockProperty = typeof(Product).GetProperty(nameof(Product.CurrentStock));
+        currentStockProperty?.SetValue(product, currentStock);
+
+        // Act
+        var isLowStock = product.IsLowStock();
+
+        // Assert
+        Assert.Equal(expectedIsLowStock, isLowStock);
+    }
+
+    [Theory]
+    [InlineData(0, false)]  // No stock
+    [InlineData(1, true)]   // Has stock
+    [InlineData(10, true)]  // Has stock
+    [InlineData(-1, false)] // Edge case: negative stock (should not happen in practice)
+    public void Product_HasStock_ShouldReturnCorrectValue(int currentStock, bool expectedHasStock)
+    {
+        // Arrange
+        var product = new Product();
+        
+        // Using reflection to set the private setter for testing purposes
+        var currentStockProperty = typeof(Product).GetProperty(nameof(Product.CurrentStock));
+        currentStockProperty?.SetValue(product, currentStock);
+
+        // Act
+        var hasStock = product.HasStock();
+
+        // Assert
+        Assert.Equal(expectedHasStock, hasStock);
+    }
+
+    [Fact]
+    public void Product_StockMovements_ShouldBeInitializedAsEmptyCollection()
+    {
+        // Arrange & Act
+        var product = new Product();
+
+        // Assert
+        Assert.NotNull(product.StockMovements);
+        Assert.Empty(product.StockMovements);
+        Assert.IsAssignableFrom<ICollection<StockMovement>>(product.StockMovements);
+    }
+
+    [Fact]
+    public void Product_CurrentStock_ShouldDefaultToZero()
+    {
+        // Arrange & Act
+        var product = new Product();
+
+        // Assert
+        Assert.Equal(0, product.CurrentStock);
     }
 }

@@ -2,7 +2,7 @@ namespace Core.Enums;
 
 /// <summary>
 /// Defines system-defined movement types that are automatically created for each tenant.
-/// These types cannot be modified or deleted by tenants as they are essential for core operations.
+/// These types cannot be modified or deleted by tenant users as they are essential for core operations.
 /// </summary>
 public enum SystemMovementTypes
 {
