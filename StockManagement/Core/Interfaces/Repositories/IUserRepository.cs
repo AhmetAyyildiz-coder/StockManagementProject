@@ -23,14 +23,14 @@ public interface IUserRepository : IGenericRepository<User, int>
     /// <param name="email">The email address to search for</param>
     /// <param name="tenantId">The tenant identifier</param>
     /// <returns>The user if found, null otherwise</returns>
-    Task<User?> GetByEmailAndTenantAsync(string email, string tenantId);
+    Task<User?> GetByEmailAndTenantAsync(string email, int tenantId);
     
     /// <summary>
     /// Gets all users belonging to a specific tenant.
     /// </summary>
     /// <param name="tenantId">The tenant identifier</param>
     /// <returns>Collection of users in the specified tenant</returns>
-    Task<IEnumerable<User>> GetByTenantIdAsync(string tenantId);
+    Task<IEnumerable<User>> GetByTenantIdAsync(int tenantId);
     
     /// <summary>
     /// Gets all users with a specific role.
@@ -46,7 +46,7 @@ public interface IUserRepository : IGenericRepository<User, int>
     /// <param name="tenantId">The tenant identifier</param>
     /// <param name="excludeUserId">Optional user ID to exclude from the check (for updates)</param>
     /// <returns>True if the email is unique within the tenant, false otherwise</returns>
-    Task<bool> IsEmailUniqueInTenantAsync(string email, string tenantId, int? excludeUserId = null);
+    Task<bool> IsEmailUniqueInTenantAsync(string email, int tenantId, int? excludeUserId = null);
     
     /// <summary>
     /// Updates the last login timestamp for a user.

@@ -45,7 +45,7 @@ public interface IProductRepository : IGenericRepository<Product, int>
     /// <param name="tenantId">The tenant identifier</param>
     /// <param name="excludeProductId">Optional product ID to exclude from the check (for updates)</param>
     /// <returns>True if the SKU is unique within the tenant, false otherwise</returns>
-    Task<bool> IsSKUUniqueInTenantAsync(string sku, string tenantId, int? excludeProductId = null);
+    Task<bool> IsSKUUniqueInTenantAsync(string sku, int tenantId, int? excludeProductId = null);
     
     /// <summary>
     /// Searches products using comprehensive criteria with pagination and sorting.
