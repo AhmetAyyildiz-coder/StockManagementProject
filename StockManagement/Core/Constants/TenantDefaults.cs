@@ -14,7 +14,7 @@ public static class TenantDefaults
     /// Default product categories created for every new tenant.
     /// These provide a basic categorization structure for products.
     /// </summary>
-    public static readonly List<string> DefaultCategories = new()
+    public static readonly IReadOnlyList<string> DefaultCategories = new List<string>
     {
         "Genel",
         "Elektronik", 
