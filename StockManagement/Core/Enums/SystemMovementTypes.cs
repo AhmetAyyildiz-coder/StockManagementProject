@@ -2,37 +2,43 @@ namespace Core.Enums;
 
 /// <summary>
 /// Defines system-defined movement types that are automatically created for each tenant.
-/// These types cannot be modified or deleted by tenant users and provide standard stock movement operations.
+/// These types cannot be modified or deleted by tenant users as they are essential for core operations.
 /// </summary>
 public enum SystemMovementTypes
 {
     /// <summary>
-    /// Purchase movement type (+1 Direction) - Incoming stock from suppliers.
+    /// Purchase/Incoming stock movement (+1 Direction).
+    /// Used when products are received from suppliers.
     /// </summary>
     Purchase = 1,
-    
+
     /// <summary>
-    /// Sale movement type (-1 Direction) - Outgoing stock to customers.
+    /// Sale/Outgoing stock movement (-1 Direction).
+    /// Used when products are sold to customers.
     /// </summary>
     Sale = 2,
-    
+
     /// <summary>
-    /// Loss movement type (-1 Direction) - Stock lost due to damage, theft, or other reasons.
+    /// Loss/Shrinkage stock movement (-1 Direction).
+    /// Used for damaged, expired, or lost inventory.
     /// </summary>
     Loss = 3,
-    
+
     /// <summary>
-    /// Found movement type (+1 Direction) - Stock found during inventory counts.
+    /// Found/Discovered stock movement (+1 Direction).
+    /// Used when previously unknown inventory is discovered.
     /// </summary>
     Found = 4,
-    
+
     /// <summary>
-    /// Return movement type (+1 Direction) - Returned stock from customers.
+    /// Return/Customer return stock movement (+1 Direction).
+    /// Used when customers return products to inventory.
     /// </summary>
     Return = 5,
-    
+
     /// <summary>
-    /// Damage movement type (-1 Direction) - Stock marked as damaged and removed from inventory.
+    /// Damage/Damaged goods stock movement (-1 Direction).
+    /// Used for items that are damaged and need to be removed from inventory.
     /// </summary>
     Damage = 6
 }

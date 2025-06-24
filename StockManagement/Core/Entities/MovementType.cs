@@ -3,8 +3,9 @@ using Core.Entities.Base;
 namespace Core.Entities;
 
 /// <summary>
-/// Represents a parametric stock movement type configuration in the inventory management system.
+/// Represents a parametric stock movement type configuration in the multi-tenant stock management system.
 /// Allows tenants to define custom movement types while maintaining system-defined types.
+/// Defines how different types of stock movements should be processed and categorized.
 /// Inherits from TenantEntity to ensure proper tenant isolation.
 /// </summary>
 public class MovementType : TenantEntity, IEntity<int>
@@ -21,19 +22,19 @@ public class MovementType : TenantEntity, IEntity<int>
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the unique code for the movement type within the tenant.
+    /// Gets or sets the unique code identifier for the movement type within the tenant.
     /// Examples: "PURCHASE", "SALE", "LOSS", "ADJUSTMENT"
     /// </summary>
     public string Code { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the direction of stock movement.
+    /// Gets or sets the direction of stock change for this movement type.
     /// +1 indicates stock increase (incoming), -1 indicates stock decrease (outgoing).
     /// </summary>
     public int Direction { get; set; }
 
     /// <summary>
-    /// Gets or sets the optional description of the movement type.
+    /// Gets or sets an optional description explaining when this movement type should be used.
     /// Provides additional context for the movement type usage.
     /// </summary>
     public string? Description { get; set; }
@@ -51,7 +52,7 @@ public class MovementType : TenantEntity, IEntity<int>
     public bool RequiresManagerApproval { get; set; } = false;
 
     /// <summary>
-    /// Gets or sets the user ID who created this movement type.
+    /// Gets or sets the identifier of the user who created this movement type.
     /// Null for system-defined movement types.
     /// </summary>
     public int? CreatedByUserId { get; set; }

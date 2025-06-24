@@ -3,7 +3,8 @@ using Core.Entities.Base;
 namespace Core.Entities;
 
 /// <summary>
-/// Represents a stock movement transaction in the inventory management system.
+/// Represents a stock movement transaction in the multi-tenant stock management system.
+/// Records all changes to product inventory levels with full audit tracking.
 /// Tracks all inventory changes with audit trail and reference information.
 /// Inherits from TenantEntity to ensure proper tenant isolation.
 /// </summary>
@@ -15,51 +16,57 @@ public class StockMovement : TenantEntity, IEntity<int>
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the product identifier for this movement.
+    /// Gets or sets the identifier of the product being moved.
     /// </summary>
     public int ProductId { get; set; }
 
     /// <summary>
-    /// Gets or sets the quantity of the movement.
-    /// This value is always positive - the direction is determined by MovementType.Direction.
+    /// Gets or sets the quantity of the product being moved.
+    /// This value is always positive - the direction is determined by the MovementType.
     /// </summary>
     public int Quantity { get; set; }
 
     /// <summary>
-    /// Gets or sets the movement type identifier.
-    /// References the MovementType that defines the nature of this movement.
+    /// Gets or sets the identifier of the movement type that defines the nature of this movement.
     /// </summary>
     public int MovementTypeId { get; set; }
 
     /// <summary>
-    /// Gets or sets the external reference for this movement.
-    /// Examples: invoice number, order number, transfer reference, etc.
+    /// Gets or sets an optional reference document or transaction identifier.
+    /// Examples include invoice numbers, purchase order numbers, or batch codes.
     /// </summary>
     public string? Reference { get; set; }
 
     /// <summary>
-    /// Gets or sets additional notes about this movement.
+    /// Gets or sets optional notes or comments about this movement.
     /// Optional field for providing context or additional information.
     /// </summary>
     public string? Notes { get; set; }
 
     /// <summary>
-    /// Gets or sets the unit price at the time of movement.
+    /// Gets or sets the unit price of the product at the time of movement.
+    /// Required for incoming movements to calculate stock valuation.
     /// Used for calculating stock value and cost tracking.
     /// </summary>
     public decimal? UnitPrice { get; set; }
 
     /// <summary>
-    /// Gets or sets the supplier identifier for incoming movements.
-    /// Used to track which supplier provided the stock for purchase movements.
+    /// Gets or sets the identifier of the supplier for incoming movements.
+    /// Optional field used to track the source of purchased products.
     /// </summary>
     public int? SupplierId { get; set; }
 
     /// <summary>
-    /// Gets or sets the user identifier who created this movement.
+    /// Gets or sets the identifier of the user who created this movement.
     /// Required for audit trail and accountability.
     /// </summary>
     public int CreatedByUserId { get; set; }
+
+    /// <summary>
+    /// Gets the calculated quantity change considering the movement direction.
+    /// Positive for incoming movements, negative for outgoing movements.
+    /// </summary>
+    public int CalculatedQuantity => MovementType?.Direction * Quantity ?? 0;
 
     // Navigation Properties
 
@@ -69,7 +76,7 @@ public class StockMovement : TenantEntity, IEntity<int>
     public Product Product { get; set; } = null!;
 
     /// <summary>
-    /// Gets or sets the movement type that defines this movement's behavior.
+    /// Gets or sets the movement type that defines the nature of this movement.
     /// </summary>
     public MovementType MovementType { get; set; } = null!;
 
@@ -82,12 +89,4 @@ public class StockMovement : TenantEntity, IEntity<int>
     /// Gets or sets the user who created this movement.
     /// </summary>
     public User CreatedByUser { get; set; } = null!;
-
-    // Computed Properties
-
-    /// <summary>
-    /// Gets the calculated quantity considering the movement direction.
-    /// Positive values increase stock, negative values decrease stock.
-    /// </summary>
-    public int CalculatedQuantity => Quantity * MovementType.Direction;
 }
