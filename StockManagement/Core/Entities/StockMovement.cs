@@ -60,7 +60,7 @@ public class StockMovement : TenantEntity, IEntity<int>
     /// Gets or sets the identifier of the user who created this movement.
     /// Required for audit trail and accountability.
     /// </summary>
-    public int? CreatedByUserId { get; set; }
+    public int CreatedByUserId { get; set; }
 
     /// <summary>
     /// Gets the calculated quantity change considering the movement direction.
@@ -88,5 +88,5 @@ public class StockMovement : TenantEntity, IEntity<int>
     /// <summary>
     /// Gets or sets the user who created this movement.
     /// </summary>
-    public User? CreatedByUser { get; set; }
+    public User CreatedByUser { get; set; } = null!;
 }
