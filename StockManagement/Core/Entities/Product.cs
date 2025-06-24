@@ -6,7 +6,7 @@ namespace Core.Entities;
 /// Represents a product in the inventory management system.
 /// Inherits from TenantEntity to ensure proper tenant isolation.
 /// </summary>
-public class Product : TenantEntity
+public class Product : TenantEntity, IEntity<int>
 {
     /// <summary>
     /// Gets or sets the unique identifier for the product.
