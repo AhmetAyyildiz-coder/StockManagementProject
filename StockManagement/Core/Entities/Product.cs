@@ -56,7 +56,29 @@ public class Product : TenantEntity, IEntity<int>
 
     /// <summary>
     /// Gets or sets the collection of stock movements for this product.
-    /// Will be implemented in Phase 2 - currently empty for MVP.
     /// </summary>
-    public ICollection<object> StockMovements { get; set; } = new List<object>();
+    public ICollection<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
+
+    // Computed Properties
+
+    /// <summary>
+    /// Gets the current stock level for this product.
+    /// This is a computed property that should be calculated by summing all stock movements.
+    /// Implementation will be handled in the Infrastructure layer for performance optimization.
+    /// </summary>
+    public int CurrentStock { get; private set; } = 0;
+
+    // Helper Methods
+
+    /// <summary>
+    /// Determines if the current stock is below the minimum stock level.
+    /// </summary>
+    /// <returns>True if current stock is at or below minimum level, false otherwise</returns>
+    public bool IsLowStock() => CurrentStock <= MinStockLevel;
+
+    /// <summary>
+    /// Determines if the product has stock available.
+    /// </summary>
+    /// <returns>True if current stock is greater than zero, false otherwise</returns>
+    public bool HasStock() => CurrentStock > 0;
 }
