@@ -6,7 +6,7 @@ namespace Core.Entities;
 /// Represents a category for organizing products in a hierarchical structure.
 /// Inherits from TenantEntity to ensure proper tenant isolation.
 /// </summary>
-public class Category : TenantEntity
+public class Category : TenantEntity, IEntity<int>
 {
     /// <summary>
     /// Gets or sets the unique identifier for the category.

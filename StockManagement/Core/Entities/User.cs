@@ -7,7 +7,7 @@ namespace Core.Entities;
 /// Represents a user entity in the multi-tenant Stock Management system.
 /// Placeholder entity to support interface contracts - full implementation in Issue #002.
 /// </summary>
-public class User : TenantEntity
+public class User : TenantEntity, IEntity<int>
 {
     /// <summary>
     /// Gets or sets the unique identifier for the user.
