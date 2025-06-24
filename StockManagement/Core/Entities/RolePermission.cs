@@ -7,7 +7,7 @@ namespace Core.Entities;
 /// Represents the mapping between user roles and permissions in the multi-tenant authorization system.
 /// This entity establishes the many-to-many relationship between UserRole enum and Permission entities.
 /// </summary>
-public class RolePermission : TenantEntity
+public class RolePermission : TenantEntity, IEntity<int>
 {
     /// <summary>
     /// Gets or sets the unique identifier for the role-permission mapping.

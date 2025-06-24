@@ -26,6 +26,12 @@ public static class Permissions
     /// </summary>
     public const string VIEW_STOCK_REPORTS = "VIEW_STOCK_REPORTS";
     
+    /// <summary>
+    /// Permission to view general reports and analytics.
+    /// Available to ReadOnly role and above.
+    /// </summary>
+    public const string VIEW_REPORTS = "VIEW_REPORTS";
+    
     #endregion
     
     #region Product Management Permissions

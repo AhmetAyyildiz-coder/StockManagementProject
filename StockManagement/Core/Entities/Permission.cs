@@ -6,7 +6,7 @@ namespace Core.Entities;
 /// Represents a permission entity in the multi-tenant authorization system.
 /// Defines specific permissions that can be assigned to roles for access control.
 /// </summary>
-public class Permission : TenantEntity
+public class Permission : TenantEntity, IEntity<int>
 {
     /// <summary>
     /// Gets or sets the unique identifier for the permission.
