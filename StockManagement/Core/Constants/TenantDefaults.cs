@@ -31,7 +31,7 @@ public static class TenantDefaults
     /// Default stock movement types with their configurations (Name, Code, Direction, IsSystemDefined).
     /// Direction: 1 = Stock In, -1 = Stock Out, IsSystemDefined: true = Cannot be modified by tenant.
     /// </summary>
-    public static readonly Dictionary<string, (string Name, string Code, int Direction, bool IsSystemDefined)> DefaultMovementTypes = new()
+    public static readonly IReadOnlyDictionary<string, (string Name, string Code, int Direction, bool IsSystemDefined)> DefaultMovementTypes = new Dictionary<string, (string Name, string Code, int Direction, bool IsSystemDefined)>
     {
         { "PURCHASE", ("Mal Alımı", "PURCHASE", 1, true) },
         { "SALE", ("Satış", "SALE", -1, true) },
