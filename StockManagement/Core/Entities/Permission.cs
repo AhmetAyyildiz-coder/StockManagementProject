@@ -3,8 +3,8 @@ using Core.Entities.Base;
 namespace Core.Entities;
 
 /// <summary>
-/// Represents a permission entity in the role-based authorization system.
-/// Defines specific capabilities that can be granted to user roles within a tenant.
+/// Represents a permission entity in the multi-tenant authorization system.
+/// Defines specific permissions that can be assigned to roles for access control.
 /// </summary>
 public class Permission : TenantEntity, IEntity<int>
 {
@@ -21,30 +21,31 @@ public class Permission : TenantEntity, IEntity<int>
 
     /// <summary>
     /// Gets or sets the unique code identifier for the permission.
-    /// Used for programmatic permission checks.
-    /// Example: "MANAGE_MOVEMENT_TYPES"
+    /// Used for programmatic access. Example: "MANAGE_MOVEMENT_TYPES"
     /// </summary>
     public string Code { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets an optional description explaining what this permission allows.
+    /// Gets or sets the optional description of what this permission allows.
+    /// Provides additional context for administrators.
     /// </summary>
     public string? Description { get; set; }
 
     /// <summary>
-    /// Gets or sets the module or feature area this permission belongs to.
+    /// Gets or sets the module or area this permission belongs to.
     /// Examples: "Stock", "Product", "User", "Settings"
     /// </summary>
     public string Module { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets a value indicating whether this permission is system-defined.
+    /// Gets or sets a value indicating whether this is a system-defined permission.
     /// System-defined permissions cannot be deleted and are created during tenant initialization.
     /// </summary>
     public bool IsSystemDefined { get; set; } = false;
 
     /// <summary>
-    /// Gets or sets the navigation property for role-permission mappings.
+    /// Gets or sets the collection of role-permission mappings.
+    /// Navigation property for roles that have this permission.
     /// </summary>
     public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }
