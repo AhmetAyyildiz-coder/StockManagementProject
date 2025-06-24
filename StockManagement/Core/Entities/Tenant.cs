@@ -3,48 +3,29 @@ using Core.Entities.Base;
 namespace Core.Entities;
 
 /// <summary>
-/// Represents a tenant in the multi-tenant system.
-/// Serves as the root entity for tenant isolation and contains all tenant-specific data.
+/// Represents a tenant entity in the multi-tenant Stock Management system.
+/// Placeholder entity to support interface contracts - full implementation in Issue #002.
 /// </summary>
-public class Tenant
+public class Tenant : TenantEntity
 {
     /// <summary>
     /// Gets or sets the unique identifier for the tenant.
-    /// Uses the subdomain as the primary key for easy tenant resolution.
     /// </summary>
-    public string Id { get; set; } = string.Empty;
+    public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the display name of the tenant organization.
+    /// Gets or sets the tenant's display name.
     /// </summary>
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the subdomain used for tenant identification in URLs.
-    /// Must be unique across the entire system.
+    /// Gets or sets the tenant's unique identifier used for data isolation.
+    /// This should match the TenantId from the base class.
     /// </summary>
-    public string SubDomain { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets a value indicating whether the tenant is active.
-    /// Inactive tenants cannot access the system.
+    /// Gets or sets a value indicating whether the tenant is currently active.
     /// </summary>
-    public bool IsActive { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets the date and time when the tenant was created.
-    /// </summary>
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    // Navigation Properties
-
-    /// <summary>
-    /// Gets or sets the collection of users belonging to this tenant.
-    /// </summary>
-    public ICollection<User> Users { get; set; } = new List<User>();
-
-    /// <summary>
-    /// Gets or sets the collection of products belonging to this tenant.
-    /// </summary>
-    public ICollection<Product> Products { get; set; } = new List<Product>();
+    public bool IsEnabled { get; set; } = true;
 }

@@ -1,50 +1,51 @@
+using Core.Entities;
+using Core.Enums;
+
 namespace Core.Services;
 
 /// <summary>
-/// Service interface for managing user context and authentication state.
+/// Service interface for managing current user context and authentication state.
 /// Provides access to current user information for audit and authorization purposes.
 /// </summary>
 public interface ICurrentUserService
 {
     /// <summary>
+    /// Gets the current authenticated user asynchronously.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation that returns the current user.</returns>
+    Task<User?> GetCurrentUserAsync();
+
+    /// <summary>
     /// Gets the identifier of the current authenticated user.
     /// Used for audit tracking and authorization decisions.
     /// </summary>
-    string? UserId { get; }
-    
+    /// <returns>The current user's identifier, or null if not authenticated.</returns>
+    string? GetCurrentUserId();
+
     /// <summary>
-    /// Gets the username or email of the current authenticated user.
+    /// Gets the tenant identifier of the current user.
+    /// Ensures the user belongs to the current tenant context.
     /// </summary>
-    string? Username { get; }
-    
+    /// <returns>The current user's tenant identifier.</returns>
+    string GetCurrentTenantId();
+
     /// <summary>
     /// Gets a value indicating whether a user is currently authenticated.
     /// </summary>
-    bool IsAuthenticated { get; }
-    
+    /// <returns>True if a user is authenticated, false otherwise.</returns>
+    bool IsAuthenticated();
+
     /// <summary>
-    /// Gets the roles assigned to the current user.
-    /// Used for role-based authorization.
+    /// Checks if the current user has the specified role.
     /// </summary>
-    IEnumerable<string> Roles { get; }
-    
+    /// <param name="role">The role to check for.</param>
+    /// <returns>True if the user has the specified role, false otherwise.</returns>
+    bool HasRole(UserRole role);
+
     /// <summary>
-    /// Gets the tenant ID of the current user.
-    /// Ensures the user belongs to the current tenant context.
+    /// Determines if the current user can manage movement types.
+    /// This is typically restricted to Manager role and above.
     /// </summary>
-    string? TenantId { get; }
-    
-    /// <summary>
-    /// Checks if the current user has a specific role.
-    /// </summary>
-    /// <param name="role">The role to check</param>
-    /// <returns>True if the user has the specified role</returns>
-    bool HasRole(string role);
-    
-    /// <summary>
-    /// Checks if the current user has any of the specified roles.
-    /// </summary>
-    /// <param name="roles">The roles to check</param>
-    /// <returns>True if the user has any of the specified roles</returns>
-    bool HasAnyRole(params string[] roles);
+    /// <returns>True if the user can manage movement types, false otherwise.</returns>
+    bool CanManageMovementTypes();
 }

@@ -2,7 +2,7 @@ using Core.Entities;
 using Core.Services;
 using Xunit;
 
-namespace Core.Tests.Services;
+namespace Core.Tests.Interfaces.Services;
 
 /// <summary>
 /// Mock implementation of ICurrentTenantService for testing

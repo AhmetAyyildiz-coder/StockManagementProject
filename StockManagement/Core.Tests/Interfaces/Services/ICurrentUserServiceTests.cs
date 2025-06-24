@@ -3,7 +3,7 @@ using Core.Enums;
 using Core.Services;
 using Xunit;
 
-namespace Core.Tests.Services;
+namespace Core.Tests.Interfaces.Services;
 
 /// <summary>
 /// Mock implementation of ICurrentUserService for testing

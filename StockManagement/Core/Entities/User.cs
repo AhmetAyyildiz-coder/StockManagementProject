@@ -1,11 +1,11 @@
 using Core.Entities.Base;
-using Core.Entities.Enums;
+using Core.Enums;
 
 namespace Core.Entities;
 
 /// <summary>
-/// Represents a user within a tenant in the multi-tenant system.
-/// Inherits from TenantEntity to ensure proper tenant isolation.
+/// Represents a user entity in the multi-tenant Stock Management system.
+/// Placeholder entity to support interface contracts - full implementation in Issue #002.
 /// </summary>
 public class User : TenantEntity
 {
@@ -15,58 +15,31 @@ public class User : TenantEntity
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the email address of the user.
-    /// Used for authentication and communication.
+    /// Gets or sets the username for authentication.
+    /// </summary>
+    public string Username { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the user's email address.
     /// </summary>
     public string Email { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the hashed password for user authentication.
-    /// Should never store plain text passwords.
+    /// Gets or sets the user's role within their tenant.
+    /// </summary>
+    public UserRole Role { get; set; } = UserRole.ReadOnly;
+
+    /// <summary>
+    /// Gets or sets the hashed password for authentication.
     /// </summary>
     public string PasswordHash { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the first name of the user.
+    /// Determines if the user can manage movement types based on their role.
     /// </summary>
-    public string FirstName { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the last name of the user.
-    /// </summary>
-    public string LastName { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the role of the user within the tenant.
-    /// Determines the user's permissions and access level.
-    /// </summary>
-    public UserRole Role { get; set; } = UserRole.TenantAdmin;
-
-    /// <summary>
-    /// Gets or sets the date and time of the user's last login.
-    /// Null indicates the user has never logged in.
-    /// </summary>
-    public DateTime? LastLoginAt { get; set; }
-
-    // Navigation Properties
-
-    /// <summary>
-    /// Gets or sets the tenant that this user belongs to.
-    /// </summary>
-    public Tenant Tenant { get; set; } = null!;
-
-    // Helper Methods
-
-    /// <summary>
-    /// Gets the full name of the user by combining first and last names.
-    /// </summary>
-    public string FullName => $"{FirstName} {LastName}";
-
-    /// <summary>
-    /// Determines whether the user can manage movement types based on their role.
-    /// Only TenantAdmin and Manager roles have this permission.
-    /// </summary>
-    /// <returns>True if the user can manage movement types, false otherwise.</returns>
-    public bool CanManageMovementTypes() => 
-        Role == UserRole.TenantAdmin || Role == UserRole.Manager;
+    /// <returns>True if the user has Manager role or higher, false otherwise.</returns>
+    public bool CanManageMovementTypes()
+    {
+        return Role <= UserRole.Manager;
+    }
 }
