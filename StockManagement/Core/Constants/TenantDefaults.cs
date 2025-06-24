@@ -49,50 +49,52 @@ public static class TenantDefaults
     /// Default permissions assigned to each user role when a tenant is initialized.
     /// This ensures consistent permission structure across all new tenants.
     /// </summary>
-    public static readonly Dictionary<UserRole, List<string>> DefaultRolePermissions = new()
-    {
-        { 
-            UserRole.TenantAdmin, 
-            new List<string> 
+    public static readonly IReadOnlyDictionary<UserRole, IReadOnlyList<string>> DefaultRolePermissions = new ReadOnlyDictionary<UserRole, IReadOnlyList<string>>(
+        new Dictionary<UserRole, IReadOnlyList<string>>
+        {
             { 
-                Permissions.MANAGE_MOVEMENT_TYPES, 
-                Permissions.CREATE_STOCK_MOVEMENT, 
-                Permissions.VIEW_STOCK_REPORTS, 
-                Permissions.MANAGE_PRODUCTS, 
-                Permissions.MANAGE_USERS, 
-                Permissions.MANAGE_SUPPLIERS,
-                Permissions.TENANT_ADMIN
-            } 
-        },
-        { 
-            UserRole.Manager, 
-            new List<string> 
+                UserRole.TenantAdmin, 
+                new List<string> 
+                { 
+                    Permissions.MANAGE_MOVEMENT_TYPES, 
+                    Permissions.CREATE_STOCK_MOVEMENT, 
+                    Permissions.VIEW_STOCK_REPORTS, 
+                    Permissions.MANAGE_PRODUCTS, 
+                    Permissions.MANAGE_USERS, 
+                    Permissions.MANAGE_SUPPLIERS,
+                    Permissions.TENANT_ADMIN
+                }.AsReadOnly()
+            },
             { 
-                Permissions.MANAGE_MOVEMENT_TYPES, 
-                Permissions.CREATE_STOCK_MOVEMENT,
-                Permissions.VIEW_STOCK_REPORTS, 
-                Permissions.MANAGE_PRODUCTS,
-                Permissions.VIEW_USERS
-            } 
-        },
-        { 
-            UserRole.Employee, 
-            new List<string> 
+                UserRole.Manager, 
+                new List<string> 
+                { 
+                    Permissions.MANAGE_MOVEMENT_TYPES, 
+                    Permissions.CREATE_STOCK_MOVEMENT,
+                    Permissions.VIEW_STOCK_REPORTS, 
+                    Permissions.MANAGE_PRODUCTS,
+                    Permissions.VIEW_USERS
+                }.AsReadOnly()
+            },
             { 
-                Permissions.CREATE_STOCK_MOVEMENT, 
-                Permissions.VIEW_PRODUCTS,
-                Permissions.VIEW_STOCK_REPORTS
-            } 
-        },
-        { 
-            UserRole.ReadOnly, 
-            new List<string> 
+                UserRole.Employee, 
+                new List<string> 
+                { 
+                    Permissions.CREATE_STOCK_MOVEMENT, 
+                    Permissions.VIEW_PRODUCTS,
+                    Permissions.VIEW_STOCK_REPORTS
+                }.AsReadOnly()
+            },
             { 
-                Permissions.VIEW_PRODUCTS, 
-                Permissions.VIEW_STOCK_REPORTS
-            } 
+                UserRole.ReadOnly, 
+                new List<string> 
+                { 
+                    Permissions.VIEW_PRODUCTS, 
+                    Permissions.VIEW_STOCK_REPORTS
+                }.AsReadOnly()
+            }
         }
-    };
+    );
     
     #endregion
 }
