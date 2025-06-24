@@ -27,6 +27,16 @@ public interface IUnitOfWork : IDisposable
     ICategoryRepository Categories { get; }
     
     /// <summary>
+    /// Gets the movement type repository.
+    /// </summary>
+    IMovementTypeRepository MovementTypes { get; }
+    
+    /// <summary>
+    /// Gets the stock movement repository.
+    /// </summary>
+    IStockMovementRepository StockMovements { get; }
+    
+    /// <summary>
     /// Saves all changes made in this unit of work to the database.
     /// </summary>
     /// <returns>The number of entities written to the database</returns>
