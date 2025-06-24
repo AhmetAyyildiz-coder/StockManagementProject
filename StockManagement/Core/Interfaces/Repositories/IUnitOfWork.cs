@@ -27,6 +27,16 @@ public interface IUnitOfWork : IDisposable
     ICategoryRepository Categories { get; }
     
     /// <summary>
+    /// Gets the permission repository.
+    /// </summary>
+    IPermissionRepository Permissions { get; }
+    
+    /// <summary>
+    /// Gets the role-permission repository.
+    /// </summary>
+    IRolePermissionRepository RolePermissions { get; }
+    
+    /// <summary>
     /// Gets the movement type repository.
     /// </summary>
     IMovementTypeRepository MovementTypes { get; }

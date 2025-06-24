@@ -59,4 +59,66 @@ public static class AuthorizationHelper
         if (!CanUserAccessTenant(user, tenantId))
             throw new UnauthorizedException($"Tenant '{tenantId}' erişim yetkiniz yok.");
     }
+
+    /// <summary>
+    /// Ensures that the user has the specified permission by checking the user permissions list.
+    /// Throws an exception if the user lacks the required permission.
+    /// </summary>
+    /// <param name="user">The user to check permissions for.</param>
+    /// <param name="userPermissions">The list of permissions granted to the user.</param>
+    /// <param name="permissionCode">The permission code to check for.</param>
+    /// <exception cref="UnauthorizedException">Thrown when the user lacks the required permission.</exception>
+    public static void EnsureHasPermission(User user, List<Permission> userPermissions, string permissionCode)
+    {
+        if (!userPermissions.Any(p => p.Code == permissionCode))
+            throw new UnauthorizedException($"Bu işlem için '{permissionCode}' yetkisi gereklidir.");
+    }
+
+    /// <summary>
+    /// Checks if the user has any of the specified permissions.
+    /// </summary>
+    /// <param name="user">The user to check permissions for.</param>
+    /// <param name="userPermissions">The list of permissions granted to the user.</param>
+    /// <param name="permissionCodes">The permission codes to check for.</param>
+    /// <returns>True if the user has at least one of the specified permissions, false otherwise.</returns>
+    public static bool HasAnyPermission(User user, List<Permission> userPermissions, params string[] permissionCodes)
+    {
+        return permissionCodes.Any(code => userPermissions.Any(p => p.Code == code));
+    }
+
+    /// <summary>
+    /// Checks if the user has all of the specified permissions.
+    /// </summary>
+    /// <param name="user">The user to check permissions for.</param>
+    /// <param name="userPermissions">The list of permissions granted to the user.</param>
+    /// <param name="permissionCodes">The permission codes to check for.</param>
+    /// <returns>True if the user has all of the specified permissions, false otherwise.</returns>
+    public static bool HasAllPermissions(User user, List<Permission> userPermissions, params string[] permissionCodes)
+    {
+        return permissionCodes.All(code => userPermissions.Any(p => p.Code == code));
+    }
+
+    /// <summary>
+    /// Validates that a permission code follows the required format and constraints.
+    /// </summary>
+    /// <param name="code">The permission code to validate.</param>
+    /// <returns>True if the permission code is valid, false otherwise.</returns>
+    public static bool IsValidPermissionCode(string code)
+    {
+        return !string.IsNullOrWhiteSpace(code) && 
+               code.All(c => char.IsLetterOrDigit(c) || c == '_') &&
+               code.Length <= 50;
+    }
+
+    /// <summary>
+    /// Determines if the current role has higher privileges than the target role.
+    /// Lower numeric values indicate higher privileges in the role hierarchy.
+    /// </summary>
+    /// <param name="currentRole">The current user role.</param>
+    /// <param name="targetRole">The target role to compare against.</param>
+    /// <returns>True if the current role has higher privileges, false otherwise.</returns>
+    public static bool IsHigherRole(UserRole currentRole, UserRole targetRole)
+    {
+        return (int)currentRole < (int)targetRole; // Lower number = higher privilege
+    }
 }

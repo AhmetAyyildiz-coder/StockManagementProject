@@ -124,4 +124,134 @@ public class AuthorizationHelperTests
         AuthorizationHelper.EnsureCanAccessTenant(user, "tenant-3");
         AuthorizationHelper.EnsureCanAccessTenant(user, "different-tenant");
     }
+
+    [Fact]
+    public void EnsureHasPermission_ShouldPassWhenUserHasPermission()
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Manager, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new() { Code = "MANAGE_MOVEMENT_TYPES", Name = "Manage Movement Types" },
+            new() { Code = "VIEW_REPORTS", Name = "View Reports" }
+        };
+
+        // Act & Assert - Should not throw
+        AuthorizationHelper.EnsureHasPermission(user, permissions, "MANAGE_MOVEMENT_TYPES");
+        AuthorizationHelper.EnsureHasPermission(user, permissions, "VIEW_REPORTS");
+    }
+
+    [Fact]
+    public void EnsureHasPermission_ShouldThrowWhenUserLacksPermission()
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Employee, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new() { Code = "VIEW_REPORTS", Name = "View Reports" }
+        };
+
+        // Act & Assert
+        var exception = Assert.Throws<UnauthorizedException>(() =>
+            AuthorizationHelper.EnsureHasPermission(user, permissions, "MANAGE_MOVEMENT_TYPES"));
+        Assert.Equal("Bu işlem için 'MANAGE_MOVEMENT_TYPES' yetkisi gereklidir.", exception.Message);
+    }
+
+    [Theory]
+    [InlineData("MANAGE_MOVEMENT_TYPES", true)]
+    [InlineData("VIEW_REPORTS", true)]
+    [InlineData("NONEXISTENT_PERMISSION", false)]
+    public void HasAnyPermission_ShouldReturnCorrectResult(string testPermission, bool expectedResult)
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Manager, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new() { Code = "MANAGE_MOVEMENT_TYPES", Name = "Manage Movement Types" },
+            new() { Code = "VIEW_REPORTS", Name = "View Reports" }
+        };
+
+        // Act
+        var result = AuthorizationHelper.HasAnyPermission(user, permissions, testPermission, "ANOTHER_PERMISSION");
+
+        // Assert
+        Assert.Equal(expectedResult, result);
+    }
+
+    [Fact]
+    public void HasAllPermissions_ShouldReturnTrueWhenUserHasAllPermissions()
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Manager, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new() { Code = "MANAGE_MOVEMENT_TYPES", Name = "Manage Movement Types" },
+            new() { Code = "VIEW_REPORTS", Name = "View Reports" },
+            new() { Code = "CREATE_STOCK_MOVEMENT", Name = "Create Stock Movement" }
+        };
+
+        // Act
+        var result = AuthorizationHelper.HasAllPermissions(user, permissions, 
+            "MANAGE_MOVEMENT_TYPES", "VIEW_REPORTS");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void HasAllPermissions_ShouldReturnFalseWhenUserMissingPermissions()
+    {
+        // Arrange
+        var user = new User { Role = UserRole.Employee, TenantId = "tenant-1" };
+        var permissions = new List<Permission>
+        {
+            new() { Code = "VIEW_REPORTS", Name = "View Reports" }
+        };
+
+        // Act
+        var result = AuthorizationHelper.HasAllPermissions(user, permissions,
+            "MANAGE_MOVEMENT_TYPES", "VIEW_REPORTS");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Theory]
+    [InlineData("MANAGE_MOVEMENT_TYPES", true)]
+    [InlineData("VIEW_REPORTS", true)]
+    [InlineData("MANAGE_USERS_123", true)]
+    [InlineData("", false)]
+    [InlineData("   ", false)]
+    [InlineData(null, false)]
+    [InlineData("VERY_LONG_PERMISSION_CODE_THAT_EXCEEDS_FIFTY_CHARACTERS_LIMIT", false)]
+    [InlineData("INVALID-CODE-WITH-HYPHENS", false)]
+    [InlineData("INVALID@CODE#WITH$SYMBOLS", false)]
+    public void IsValidPermissionCode_ShouldValidateCorrectly(string code, bool expectedResult)
+    {
+        // Act
+        var result = AuthorizationHelper.IsValidPermissionCode(code);
+
+        // Assert
+        Assert.Equal(expectedResult, result);
+    }
+
+    [Theory]
+    [InlineData(UserRole.SystemAdmin, UserRole.TenantAdmin, true)]
+    [InlineData(UserRole.SystemAdmin, UserRole.Manager, true)]
+    [InlineData(UserRole.TenantAdmin, UserRole.Manager, true)]
+    [InlineData(UserRole.Manager, UserRole.Employee, true)]
+    [InlineData(UserRole.Employee, UserRole.ReadOnly, true)]
+    [InlineData(UserRole.Manager, UserRole.TenantAdmin, false)]
+    [InlineData(UserRole.Employee, UserRole.Manager, false)]
+    [InlineData(UserRole.ReadOnly, UserRole.SystemAdmin, false)]
+    [InlineData(UserRole.TenantAdmin, UserRole.SystemAdmin, false)]
+    [InlineData(UserRole.Manager, UserRole.Manager, false)] // Same role is not higher
+    public void IsHigherRole_ShouldCompareRolesCorrectly(UserRole currentRole, UserRole targetRole, bool expectedResult)
+    {
+        // Act
+        var result = AuthorizationHelper.IsHigherRole(currentRole, targetRole);
+
+        // Assert
+        Assert.Equal(expectedResult, result);
+    }
 }
